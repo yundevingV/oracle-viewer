@@ -17,8 +17,16 @@
 
 ## 📊 Core Logic
 
-실제 시장 가격($P_{real}$)과 온체인 가격($P_{on-chain}$)을 비교하여 괴리율을 계산합니다.
-$$Gap (\%) = \frac{|P_{real} - P_{on-chain}|}{P_{real}} \times 100$$
+실제 시장 가격과 온체인 가격을 비교하여 괴리율을 계산합니다.
+
+```math
+Gap(\%) = \frac{|P_{real} - P_{onchain}|}{P_{real}} \times 100
+```
+
+여기서:
+
+- $P_{real}$: 실제 시장 가격 (나스닥)
+- $P_{onchain}$: 온체인 합성 자산 가격
 
 ## 🚀 Getting Started
 
