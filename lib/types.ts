@@ -8,43 +8,7 @@
 // Helius API Types
 // ============================================
 
-export interface HeliusAssetOwnership {
-  ownerAddress: string;
-  displayOptions: {
-    showRawData: boolean;
-    showNativeBalance: boolean;
-  };
-}
-
 export interface HeliusAsset {
-  id: string;
-  content?: {
-    metadata?: {
-      name?: string;
-      symbol?: string;
-      description?: string;
-    };
-    links?: {
-      image?: string;
-    };
-  };
-  ownership?: {
-    owner?: string;
-  };
-  compression?: {
-    compressed: boolean;
-  };
-}
-
-export interface HeliusGetAssetsByOwnerRequest {
-  ownerAddress: string;
-  displayOptions?: {
-    showRawData?: boolean;
-    showNativeBalance?: boolean;
-  };
-}
-
-export interface HeliusGetAssetsByOwnerResponse {
   jsonrpc: string;
   result: {
     id: string;
@@ -56,42 +20,25 @@ export interface HeliusGetAssetsByOwnerResponse {
       };
     };
   };
-}
-
-export interface HeliusGetAssetRequest {
   id: string;
 }
 
-export interface HeliusGetAssetResponse {
-  jsonrpc: string;
-  result: HeliusAsset;
-}
-
 // ============================================
-// Polygon API Types
+// Eodhd API Types
 // ============================================
 
-export interface PolygonTickerParams {
-  symbol: string;
-  from: string; // YYYY-MM-DD
-  to: string; // YYYY-MM-DD
-}
-
-export interface PolygonAggregate {
-  c: number; // close
-  h: number; // high
-  l: number; // low
-  o: number; // open
-  v: number; // volume
-  t: number; // timestamp
-}
-
-export interface PolygonTickerResponse {
-  ticker: string;
-  queryCount: number;
-  resultsCount: number;
-  adjusted: boolean;
-  results: PolygonAggregate[];
+export interface EodhdAsset {
+  code: string;
+  timestamp: number;
+  gmtoffset: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+  previousClose: number;
+  change: number;
+  change_p: number;
 }
 
 // ============================================
