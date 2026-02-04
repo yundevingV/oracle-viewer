@@ -47,10 +47,14 @@ export interface HeliusGetAssetsByOwnerRequest {
 export interface HeliusGetAssetsByOwnerResponse {
   jsonrpc: string;
   result: {
-    total: number;
-    limit: number;
-    page: number;
-    items: HeliusAsset[];
+    id: string;
+    token_info: {
+      symbol: string;
+      price_info: {
+        price_per_token: number;
+        currency: string;
+      };
+    };
   };
 }
 
