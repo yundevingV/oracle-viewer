@@ -9,6 +9,7 @@ interface CopyButtonProps {
   token: string;
   onChain: number;
   market: number;
+  tokenAddress: string;
   label?: string;
   className?: string;
 }
@@ -22,6 +23,7 @@ export function CopyButton({
   token,
   onChain,
   market,
+  tokenAddress,
   label,
   className = "",
 }: CopyButtonProps) {
@@ -45,7 +47,10 @@ $${onChain}
 from Solana 
 
 📈 Market Price
-${isPreStock ? "비상장" : `$${market}`}`;
+${isPreStock ? "비상장" : `$${market}`}
+
+🔗 Solscan
+https://solscan.io/token/${tokenAddress}`;
     } else {
       text = `On-chain: $${onChain} | Market: $${market}`;
     }
@@ -56,7 +61,7 @@ ${isPreStock ? "비상장" : `$${market}`}`;
   return (
     <button
       onClick={handleCopy}
-      className={`inline-flex items-center gap-2 px-3 py-1.5 glass glass-hover rounded-lg text-sm font-medium transition-all duration-200 ${
+      className={`inline-flex items-center gap-2 px-3 py-1.5 glass glass-hover rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${
         isCopied ? "text-green-400" : "text-gray-300"
       } ${className}`}
       title={isCopied ? "Copied!" : "Copy to clipboard"}

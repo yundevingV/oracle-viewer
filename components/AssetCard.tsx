@@ -28,7 +28,7 @@ export function AssetCard({ asset, onClick }: AssetCardProps) {
     <div
       onClick={onClick}
       className={`
-        glass glass-hover rounded-2xl p-6 cursor-pointer
+        glass glass-hover rounded-2xl p-6 
         bg-gradient-to-br ${statusColors[asset.price.status]}
         animate-fade-in
       `}
@@ -52,6 +52,7 @@ export function AssetCard({ asset, onClick }: AssetCardProps) {
                 token={asset.symbol}
                 onChain={asset.price.onchain}
                 market={asset.price.market}
+                tokenAddress={asset.tokenAddress}
               />
             </div>
             <p className="text-sm text-gray-400">{asset.symbol}</p>

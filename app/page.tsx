@@ -19,6 +19,12 @@ const ASSETS = [
     stockSymbol: "NVDA",
   },
   {
+    name: "테슬라",
+    symbol: "TSLA",
+    tokenAddress: "XsDoVfqeBukxuZHWhdvWHBhgEHjGNst4MLodqsJHzoB",
+    stockSymbol: "TSLA",
+  },
+  {
     name: "스페이스X",
     symbol: "SPACEX",
     tokenAddress: "PreANxuXjsy2pvisWWMNB6YaJNzr7681wJJr2rHsfTh",
@@ -87,6 +93,7 @@ export default function Home() {
       },
       imageUrl: undefined,
       lastUpdated: new Date(),
+      tokenAddress: asset.tokenAddress,
     };
   });
 

@@ -62,6 +62,7 @@ export interface AssetComparison {
   imageUrl?: string;
   price: AssetPrice;
   lastUpdated: Date;
+  tokenAddress: string;
 }
 
 // ============================================
