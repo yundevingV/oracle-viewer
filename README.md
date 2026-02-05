@@ -12,7 +12,7 @@
 - **Styling**: Tailwind CSS
 - **Data Source**:
   - **On-chain**: Helius RPC (DAS API / `getAsset`)
-  - **Off-chain**: Massive (Polygon) API (`prev` Aggregates)
+  - **Off-chain**: EODHD API (`prev`)
 - **Monitoring**: Custom Depegging Logic ($Gap > 2\%$)
 
 ## 📊 Core Logic
@@ -34,6 +34,6 @@ Gap(\%) = \frac{|P_{real} - P_{onchain}|}{P_{real}} \times 100
 
 ```env
 NEXT_PUBLIC_HELIUS_API_KEY=your_helius_key
-NEXT_PUBLIC_MASSIVE_API_KEY=your_massive_key
+NEXT_PUBLIC_EODHD_API_KEY=your_eodhd_key
 NEXT_PUBLIC_WALLET_ADDRESS=your_solana_wallet_address
 ```
