@@ -27,18 +27,19 @@ export interface HeliusAsset {
 // Eodhd API Types
 // ============================================
 
+// 비상장일때 "NA"로 반환됨
 export interface EodhdAsset {
   code: string;
-  timestamp: number;
+  timestamp: number | "NA";
   gmtoffset: number;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-  volume: number;
-  previousClose: number;
-  change: number;
-  change_p: number;
+  open: number | "NA";
+  high: number | "NA";
+  low: number | "NA";
+  close: number | "NA";
+  volume: number | "NA";
+  previousClose: number | "NA";
+  change: number | "NA";
+  change_p: number | "NA";
 }
 
 // ============================================
@@ -61,13 +62,6 @@ export interface AssetComparison {
   imageUrl?: string;
   price: AssetPrice;
   lastUpdated: Date;
-}
-
-export interface DashboardStats {
-  totalAssets: number;
-  averageGap: number;
-  criticalAssets: number;
-  warningAssets: number;
 }
 
 // ============================================

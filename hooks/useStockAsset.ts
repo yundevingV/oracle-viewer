@@ -1,24 +1,29 @@
 /**
- * Design Pattern: Custom Hook with TanStack Query
- * Helius API에서 토큰 정보를 조회하는 React Query Hook
+ * Design Pattern: Dynamic Custom Hook with TanStack Query
+ * 여러 stock symbol을 받아 병렬로 데이터를 조회합니다.
  */
 
-import { useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import { getStockAsset } from "@/lib/api";
 
-export function useStockAsset(symbol: string) {
-  const { data, isPending, error } = useQuery({
-    queryKey: ["eodhd-asset", symbol],
-    queryFn: () => getStockAsset(symbol),
-    enabled: !!symbol,
-    staleTime: 30 * 1000, // 30초간 캐시 유지
-    gcTime: 60 * 1000, // 60초 후 가비지 컬렉션
-    retry: 2, // 실패 시 2번 재시도
+export function useStockAsset(symbols: string[]) {
+  const results = useQueries({
+    queries: symbols.map((symbol) => ({
+      queryKey: ["eodhd-asset", symbol],
+      queryFn: () => getStockAsset(symbol),
+      enabled: !!symbol,
+      staleTime: 30 * 1000,
+      gcTime: 60 * 1000,
+      retry: 2,
+    })),
+    combine: (results) => {
+      return {
+        stockData: results.map((result) => result.data),
+        isPendingStock: results.some((result) => result.isPending),
+        errorStock: results.find((result) => result.error)?.error,
+      };
+    },
   });
 
-  return {
-    stockData: data,
-    isPendingStock: isPending,
-    errorStock: error,
-  };
+  return results;
 }

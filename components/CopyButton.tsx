@@ -7,8 +7,8 @@ type CopyButtonType = "information" | "alert";
 interface CopyButtonProps {
   type: CopyButtonType;
   token: string;
-  onChain: string;
-  market: string;
+  onChain: number;
+  market: number;
   label?: string;
   className?: string;
 }
@@ -29,15 +29,14 @@ export function CopyButton({
 
   const handleCopy = async () => {
     let text = "";
-
     if (type === "alert") {
       // 괴리율 계산
-      const onChainValue = parseFloat(onChain);
-      const marketValue = parseFloat(market);
+      const onChainValue = onChain;
+      const marketValue = market;
       const gap = Math.abs(
         ((onChainValue - marketValue) / marketValue) * 100,
       ).toFixed(2);
-
+      const isPreStock = marketValue === 0;
       text = `[속보]
 
 ${token} 괴리율 ${gap}%
@@ -46,9 +45,8 @@ $${onChain}
 from Solana 
 
 📈 Market Price
-$${market}`;
+${isPreStock ? "비상장" : `$${market}`}`;
     } else {
-      // information 타입일 때는 간단한 정보만
       text = `On-chain: $${onChain} | Market: $${market}`;
     }
 

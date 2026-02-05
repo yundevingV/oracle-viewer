@@ -5,6 +5,7 @@
 
 import type { AssetComparison } from "@/lib/types";
 import Image from "next/image";
+import { CopyButton } from "./CopyButton";
 
 interface AssetCardProps {
   asset: AssetComparison;
@@ -23,7 +24,6 @@ export function AssetCard({ asset, onClick }: AssetCardProps) {
     warning: "text-amber-400",
     critical: "text-red-400",
   };
-
   return (
     <div
       onClick={onClick}
@@ -40,22 +40,34 @@ export function AssetCard({ asset, onClick }: AssetCardProps) {
               src={asset.imageUrl}
               alt={asset.name}
               className="w-12 h-12 rounded-full"
+              width={48}
+              height={48}
             />
           )}
           <div>
-            <h3 className="text-lg font-semibold text-white">{asset.name}</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-white">{asset.name}</h3>
+              <CopyButton
+                type="alert"
+                token={asset.symbol}
+                onChain={asset.price.onchain}
+                market={asset.price.market}
+              />
+            </div>
             <p className="text-sm text-gray-400">{asset.symbol}</p>
           </div>
         </div>
 
-        <div
-          className={`
-          px-3 py-1 rounded-full text-xs font-medium
-          ${statusTextColors[asset.price.status]}
-          bg-white/5
-        `}
-        >
-          {asset.price.status.toUpperCase()}
+        <div className="flex items-center gap-2">
+          <div
+            className={`
+            px-3 py-1 rounded-full text-xs font-medium
+            ${statusTextColors[asset.price.status]}
+            bg-white/5
+          `}
+          >
+            괴리율 {asset.price.gapPercentage.toFixed(2)}%
+          </div>
         </div>
       </div>
 
@@ -70,7 +82,9 @@ export function AssetCard({ asset, onClick }: AssetCardProps) {
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-400">Market Price</span>
           <span className="text-lg font-mono text-white">
-            ${asset.price.market.toFixed(2)}
+            {asset.price.market
+              ? `$${asset.price.market.toFixed(2)}`
+              : "비상장"}
           </span>
         </div>
 

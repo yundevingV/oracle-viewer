@@ -8,17 +8,32 @@
 import { useTokenAsset } from "@/hooks/useTokenAsset";
 import { useStockAsset } from "@/hooks/useStockAsset";
 import { calculateGap, getDepegStatus } from "@/lib/utils";
-import { CopyButton } from "@/components/CopyButton";
+import { AssetCard } from "@/components/AssetCard";
+import type { AssetComparison } from "@/lib/types";
 
-const TOKEN_ADDRESS = {
-  NVDA: "Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh",
-};
+const ASSETS = [
+  {
+    name: "엔비디아",
+    symbol: "NVDA",
+    tokenAddress: "Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh",
+    stockSymbol: "NVDA",
+  },
+  {
+    name: "스페이스X",
+    symbol: "SPACEX",
+    tokenAddress: "PreANxuXjsy2pvisWWMNB6YaJNzr7681wJJr2rHsfTh",
+    stockSymbol: "SPACEX",
+  },
+];
 
 export default function Home() {
   const { tokenData, isPendingToken, errorToken } = useTokenAsset(
-    TOKEN_ADDRESS.NVDA,
+    ASSETS.map((a) => a.tokenAddress),
   );
-  const { stockData, isPendingStock, errorStock } = useStockAsset("NVDA");
+
+  const { stockData, isPendingStock, errorStock } = useStockAsset(
+    ASSETS.map((a) => a.stockSymbol),
+  );
 
   // 로딩 상태
   if (isPendingToken || isPendingStock) {
@@ -45,14 +60,45 @@ export default function Home() {
     );
   }
 
-  // 데이터 추출
-  const onchainPrice =
-    tokenData?.result.token_info.price_info.price_per_token || 0;
-  const marketPrice = stockData?.close || 0;
-  const gapPercentage = calculateGap(onchainPrice, marketPrice);
-  const status = getDepegStatus(gapPercentage);
+  // AssetComparison 배열 생성
+  const assetComparisons: AssetComparison[] = ASSETS.map((asset, index) => {
+    const token = tokenData[index];
+    const stock = stockData[index];
 
-  // 상태별 색상
+    const isPreStock = stock?.close === "NA";
+
+    const onchainPrice =
+      token?.result.token_info.price_info.price_per_token || 0;
+    const marketPrice = isPreStock ? 0 : Number(stock?.close);
+    const gapPercentage = isPreStock
+      ? 0
+      : calculateGap(onchainPrice, marketPrice);
+    const status = getDepegStatus(gapPercentage);
+
+    return {
+      id: asset.symbol,
+      name: asset.name,
+      symbol: asset.symbol,
+      price: {
+        onchain: onchainPrice,
+        market: marketPrice,
+        gapPercentage,
+        status,
+      },
+      imageUrl: undefined,
+      lastUpdated: new Date(),
+    };
+  });
+
+  // 전체 상태 계산 (가장 심각한 상태 사용)
+  const overallStatus = assetComparisons.some(
+    (a) => a.price.status === "critical",
+  )
+    ? "critical"
+    : assetComparisons.some((a) => a.price.status === "warning")
+      ? "warning"
+      : "normal";
+
   const statusColors = {
     normal: "text-green-400",
     warning: "text-amber-400",
@@ -70,7 +116,7 @@ export default function Home() {
       {/* Hero Section */}
       <header className="relative overflow-hidden border-b border-white/10">
         <div
-          className={`absolute inset-0 bg-gradient-to-r ${statusBg[status]} blur-3xl`}
+          className={`absolute inset-0 bg-gradient-to-r ${statusBg[overallStatus]} blur-3xl`}
         />
 
         <div className="relative max-w-7xl mx-auto px-6 py-16">
@@ -82,79 +128,20 @@ export default function Home() {
               Real-time Solana Synthetic Asset Depegging Monitor
             </p>
             <div
-              className={`inline-block px-4 py-2 glass rounded-full ${statusColors[status]} font-semibold`}
+              className={`inline-block px-4 py-2 glass rounded-full ${statusColors[overallStatus]} font-semibold`}
             >
-              Status: {status.toUpperCase()}
+              Status: {overallStatus.toUpperCase()}
             </div>
           </div>
         </div>
       </header>
 
       {/* Main Dashboard */}
-      <main className="max-w-7xl mx-auto px-6 py-12 space-y-8">
-        {/* Asset Title Card */}
-        <section className=" rounded-2xl p-6">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div className="flex items-center gap-4">
-              <h2 className="text-3xl font-bold">엔비디아 (NVDA)</h2>
-            </div>
-            <CopyButton
-              type="alert"
-              token="엔비디아"
-              onChain={onchainPrice.toFixed(2)}
-              market={marketPrice.toFixed(2)}
-              label="정보 가져오기"
-            />
-          </div>
-        </section>
-
-        {/* Price Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* On-chain Price */}
-          <div className="glass glass-hover rounded-2xl p-6">
-            <div className="flex items-start justify-between mb-2">
-              <p className="text-sm text-gray-400">🔗 On-chain Price</p>
-            </div>
-            <p className="text-4xl font-bold text-white mb-1">
-              ${onchainPrice.toFixed(2)}
-            </p>
-            <p className="text-xs text-gray-500">from Solana (Helius)</p>
-          </div>
-
-          {/* Market Price */}
-          <div className="glass glass-hover rounded-2xl p-6">
-            <div className="flex items-start justify-between mb-2">
-              <p className="text-sm text-gray-400">📈 Market Price</p>
-            </div>
-            <p className="text-4xl font-bold text-white mb-1">
-              ${marketPrice.toFixed(2)}
-            </p>
-            <p className="text-xs text-gray-500">NVDA (EODHD Real-time)</p>
-          </div>
-
-          {/* Gap */}
-          <div
-            className={`glass glass-hover rounded-2xl p-6 border ${
-              status === "critical"
-                ? "border-red-500/50"
-                : status === "warning"
-                  ? "border-amber-500/50"
-                  : "border-green-500/50"
-            }`}
-          >
-            <p className="text-sm text-gray-400 mb-2">⚠️ Price Gap</p>
-            <p className={`text-4xl font-bold mb-1 ${statusColors[status]}`}>
-              {gapPercentage.toFixed(2)}%
-            </p>
-            <p className="text-xs text-gray-500">
-              {status === "critical"
-                ? "CRITICAL - Action Required"
-                : status === "warning"
-                  ? "WARNING - Monitor Closely"
-                  : "NORMAL - All Good"}
-            </p>
-          </div>
-        </div>
+      <main className="max-w-7xl mx-auto px-6 py-12 space-y-6">
+        {/* Asset Cards List */}
+        {assetComparisons.map((asset) => (
+          <AssetCard key={asset.symbol} asset={asset} />
+        ))}
       </main>
 
       {/* Footer */}
