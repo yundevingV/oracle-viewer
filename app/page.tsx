@@ -8,6 +8,7 @@
 import { useTokenAsset } from "@/hooks/useTokenAsset";
 import { useStockAsset } from "@/hooks/useStockAsset";
 import { calculateGap, getDepegStatus } from "@/lib/utils";
+import { CopyButton } from "@/components/CopyButton";
 
 const TOKEN_ADDRESS = {
   NVDA: "Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh",
@@ -91,11 +92,29 @@ export default function Home() {
 
       {/* Main Dashboard */}
       <main className="max-w-7xl mx-auto px-6 py-12 space-y-8">
+        {/* Asset Title Card */}
+        <section className=" rounded-2xl p-6">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-4">
+              <h2 className="text-3xl font-bold">엔비디아 (NVDA)</h2>
+            </div>
+            <CopyButton
+              type="alert"
+              token="엔비디아"
+              onChain={onchainPrice.toFixed(2)}
+              market={marketPrice.toFixed(2)}
+              label="정보 가져오기"
+            />
+          </div>
+        </section>
+
         {/* Price Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* On-chain Price */}
           <div className="glass glass-hover rounded-2xl p-6">
-            <p className="text-sm text-gray-400 mb-2">🔗 On-chain Price</p>
+            <div className="flex items-start justify-between mb-2">
+              <p className="text-sm text-gray-400">🔗 On-chain Price</p>
+            </div>
             <p className="text-4xl font-bold text-white mb-1">
               ${onchainPrice.toFixed(2)}
             </p>
@@ -104,7 +123,9 @@ export default function Home() {
 
           {/* Market Price */}
           <div className="glass glass-hover rounded-2xl p-6">
-            <p className="text-sm text-gray-400 mb-2">📈 Market Price</p>
+            <div className="flex items-start justify-between mb-2">
+              <p className="text-sm text-gray-400">📈 Market Price</p>
+            </div>
             <p className="text-4xl font-bold text-white mb-1">
               ${marketPrice.toFixed(2)}
             </p>
@@ -134,94 +155,6 @@ export default function Home() {
             </p>
           </div>
         </div>
-
-        {/* Detailed Comparison */}
-        <section className="glass rounded-2xl p-8">
-          <h2 className="text-2xl font-bold text-white mb-6">
-            📊 Price Analysis
-          </h2>
-
-          {/* Progress Bar */}
-          <div className="mb-8">
-            <div className="flex justify-between text-sm text-gray-400 mb-2">
-              <span>On-chain: ${onchainPrice.toFixed(2)}</span>
-              <span>Market: ${marketPrice.toFixed(2)}</span>
-            </div>
-            <div className="h-4 bg-gray-800 rounded-full overflow-hidden">
-              <div
-                className={`h-full transition-all duration-500 ${
-                  status === "critical"
-                    ? "bg-gradient-to-r from-red-500 to-pink-500"
-                    : status === "warning"
-                      ? "bg-gradient-to-r from-amber-500 to-orange-500"
-                      : "bg-gradient-to-r from-green-500 to-emerald-500"
-                }`}
-                style={{ width: `${Math.min(gapPercentage * 10, 100)}%` }}
-              />
-            </div>
-            <p className="text-xs text-gray-500 mt-2 text-center">
-              Gap: {gapPercentage.toFixed(4)}%
-            </p>
-          </div>
-
-          {/* Details Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-gray-800/50 rounded-xl p-4">
-              <p className="text-xs text-gray-400 mb-1">Symbol</p>
-              <p className="text-white font-semibold">
-                {tokenData?.result.token_info.symbol || "N/A"}
-              </p>
-            </div>
-            <div className="bg-gray-800/50 rounded-xl p-4">
-              <p className="text-xs text-gray-400 mb-1">Currency</p>
-              <p className="text-white font-semibold">
-                {stockData?.code || "USD"}
-              </p>
-            </div>
-            <div className="bg-gray-800/50 rounded-xl p-4">
-              <p className="text-xs text-gray-400 mb-1">24h Change</p>
-              <p
-                className={`font-semibold ${stockData?.change && stockData.change > 0 ? "text-green-400" : "text-red-400"}`}
-              >
-                {stockData?.change_p
-                  ? `${stockData.change_p.toFixed(2)}%`
-                  : "N/A"}
-              </p>
-            </div>
-            <div className="bg-gray-800/50 rounded-xl p-4">
-              <p className="text-xs text-gray-400 mb-1">Volume</p>
-              <p className="text-white font-semibold">
-                {stockData?.volume
-                  ? (stockData.volume / 1000000).toFixed(1) + "M"
-                  : "N/A"}
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Tech Info */}
-        <section className="glass rounded-2xl p-8">
-          <h2 className="text-xl font-bold text-white mb-4">🛠️ Data Sources</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div>
-              <p className="text-purple-400 font-semibold mb-1">
-                Helius RPC (Solana)
-              </p>
-              <p className="text-gray-400">
-                Token: {TOKEN_ADDRESS.NVDA.slice(0, 12)}...
-              </p>
-            </div>
-            <div>
-              <p className="text-purple-400 font-semibold mb-1">
-                EODHD API (Real-time)
-              </p>
-              <p className="text-gray-400">
-                Last Update:{" "}
-                {new Date(stockData?.timestamp || 0 * 1000).toLocaleString()}
-              </p>
-            </div>
-          </div>
-        </section>
       </main>
 
       {/* Footer */}
